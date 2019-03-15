@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <readline/readline.h>
 
+#define END_INPUT 0
+#define CONTINUE 1
+
 // linked list
 struct Token {
     char *val; // the string, null terminated
@@ -13,7 +16,7 @@ int parse() {
     if (!input) { // ctrl+d
         free(input);
         printf("\n");
-        return 0;
+        return END_INPUT;
     }
     /* worst case: every char is a special character
        adding one \0 for each char = 2*len(input) */
@@ -134,7 +137,7 @@ int parse() {
         tail = tail->next;
         free(head);
     }
-    return 1;
+    return CONTINUE;
 }
 
 int main() {
