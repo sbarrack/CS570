@@ -4,29 +4,29 @@ Operating systems
 ## a01
 Tokenizer
 
-Compile `make`
+Compile `make`  
 Run `./tokenizer`
 
 ## a02
 Shell
 
-Compile `make`
+Compile `make`  
 Run `./mush`
 
 ## a03_threads
 POSIX threads
 
-Compile `make`
+Compile `make`  
 Run `./thread_demo`
 
 ## a03_pagetable
 Page table
 
-This assignment was done with [Joseph Couri](https://github.com/jcouri).
+This assignment was done with [Joseph Couri](https://github.com/jcouri).  
 The traces were collected from a Pentium II running Windows 2000 and are courtesy of the Brigham Young University Trace Distribution Center. The files byutr.h and byu_tracereader.c implement a small program to read and print trace files.
 
-Compile `make`
-Run `./pagetable [trace] [levels] [-n pages] [-p dump] [-t]`
+Compile `make`  
+Run `./pagetable [trace] [levels] [-n pages] [-p dump] [-t]`  
 e.g. `./pagetable trace.sample.tr 4 4 8 -n 1000 -p page_dump.txt -t`
 
 Argument | Description

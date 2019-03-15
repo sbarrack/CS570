@@ -35,6 +35,7 @@ public:
     int depth;
     bool isLeaf;
     Pagetable *table; // backwards reference
+    // TODO: use a union dummy!
     // one of these two will be used
     Level **next; // for branches
     Map *map; // for leaves
@@ -47,12 +48,10 @@ public:
 class Map {
 public:
     bool valid = false; // valid bit
-    // reference to frame and page#
-    u32 frame, page;
+    u32 frame, page; // reference to frame and page#
 };
 
 u32 logicalToPage(u32 logAddr, u32 mask, u32 shift);
-// my handy functions, in lookup.cpp
 u32 mask (int bitfield);
 long int getTBSize();
 long int getUsed();

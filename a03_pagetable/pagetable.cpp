@@ -25,12 +25,11 @@ int main(int argc, char **argv) {
      * fileName - the input file name
      */
     char *p, *fileName;
-    // stores the number of bits for each level
-    int *bitfields = new int[MAX_BF];
+    int *bitfields = new int[MAX_BF]; // stores the number of bits for each level
     Pagetable *pagetable;
 
-    // evaluates each argument, start at 1 ("./pagetable" is #0)
-    for (int i = 1; i < argc; i++) {
+    // evaluates each argument
+    for (int i = 1; i < argc; i++) { // start at 1 ("./pagetable" is #0)
         if (!strcmp(argv[i], "-n")) {
             n = atoi(argv[++i]); // string to int
             setn = true;
@@ -41,8 +40,7 @@ int main(int argc, char **argv) {
             t = true;
         } else {
             if (setLevels) { // take in the remaining arguements
-                // bitfields[0] is level 1
-                bitfields[count] = atoi(argv[i]);
+                bitfields[count] = atoi(argv[i]); // bitfields[0] is level 1
                 total += bitfields[count++];
             } else { // take in the input file arguement
                 fileName = argv[i];
@@ -54,26 +52,22 @@ int main(int argc, char **argv) {
     
     // int doit = DEF_INT; // for progress meter
     int frames = DEF_INT; // frame counter
-    // used to calculate hit-miss ratios
-    double hit, miss, processed;
+    double hit, miss, processed; // used to calculate hit-miss ratios
     hit = miss = processed = DEF_DBL;
     FILE *traceFile = fopen(fileName, "rb");
     p2AddrTr trace;
 
-    while (!feof(traceFile)) { // while not end-of-file
-        if (setn && (n > 0)) { // if we used -n and there's some left
+    while (!feof(traceFile)) {
+        if (setn && (n > 0)) { // there's some left
             n--;
-        } else if (setn) { // if we used -n and there isn't
+        } else if (setn) {
             break;
         }
 
-        if (t) { // if -t print translations
-            printf("%08x -> %08x\n", trace.addr, 
-                ((frames << (MAX_BF - total)) & ~mask(MAX_BF - total)) 
-                | (trace.addr & mask(MAX_BF - total)));
+        if (t) { // print translations
+            printf("%08x -> %08x\n", trace.addr, ((frames << (MAX_BF - total)) & ~mask(MAX_BF - total)) | (trace.addr & mask(MAX_BF - total)));
         }
         NextAddress(traceFile, &trace);
-        // if there isn't a valid page here, insert and miss
         if (!pagetable->pageLookup(trace.addr)->valid) {
             pagetable->pageInsert(trace.addr, frames++);
             miss++;
@@ -81,7 +75,7 @@ int main(int argc, char **argv) {
             hit++;
         }
 
-        // for progress meter
+        // // for progress meter
         // if (++doit > 224) {
         //     printf("%.2f%% done\r", (hit + miss) / 224449.);
         //     doit = 0;
@@ -89,7 +83,7 @@ int main(int argc, char **argv) {
     }
     fclose(traceFile);
 
-    if (setp) { // if -p
+    if (setp) {
         FILE *output = fopen(p, "w");
         Map *temp;
         // lookup each valid page
@@ -103,12 +97,14 @@ int main(int argc, char **argv) {
     }
 
     printf("Page table size:  %ld\n", getTBSize());
+    
     // calculate ratios
     processed = hit + miss;
     double hitP = hit / processed * 100.;
     double missP = miss / processed * 100.;
     printf("Hits %.0f (%.2f%%), Misses %.0f (%.2f%%) # Addresses %.0f\n",
         hit, hitP, miss, missP, processed);
+
     printf("Bytes used:  %ld\n", getUsed());
 
     return 0;

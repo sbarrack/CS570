@@ -18,13 +18,11 @@ int errorPipeCount = 0, errorRedirectCount = 0;
 char in[DEF_BUF_SIZE], *argv[DEF_ARGV_SIZE];
 void execute_commands(Token *list) {
     if (list) {
-        // # of remaining commands, will never exceed 1
-        int cmds = 1;
+        int cmds = 1; // # of remaining commands, will never exceed 1
         head = list;
         tail = head;
 
         do { // while there's still tokens
-        
             // if we still have cmds left
             if (!strcmp(tail->val, "pwd") && cmds > 0) {
                 cmds--;

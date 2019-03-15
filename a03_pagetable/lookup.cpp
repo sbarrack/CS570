@@ -72,8 +72,7 @@ Map *Pagetable::pageLookup(u32 logAddr) {
     Level *temp = zero;
     while (temp) { // find the leaf node
         if (temp->isLeaf) break;
-        temp = temp->next[logicalToPage(logAddr, bitmask[temp->depth], 
-            shift[temp->depth])];
+        temp = temp->next[logicalToPage(logAddr, bitmask[temp->depth], shift[temp->depth])];
     }
     if (temp) { // if it's there, return it
         return temp->map;
@@ -92,11 +91,10 @@ void Level::pageInsert(u32 logAddr, u32 frame) {
         used += sizeof(Map);
     } else {
         // create a new Level and set level to current depth + 1
-        u32 page = logicalToPage(logAddr, table->bitmask[depth], 
-            table->shift[depth]);
+        u32 page = logicalToPage(logAddr, table->bitmask[depth], table->shift[depth]);
         next[page] = new Level(table->entry[depth + 1], depth + 1, table);
-        used += sizeof(Level) + sizeof(Level *);
         // the constructor inits the Map/Levels
+        used += sizeof(Level) + sizeof(Level *);
         next[page]->pageInsert(logAddr, frame);
     }
 }
