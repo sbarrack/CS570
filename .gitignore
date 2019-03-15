@@ -60,9 +60,12 @@ dkms.conf
 !.vscode/launch.json
 !.vscode/extensions.json
 
-*.docx
-*.pdf
+#*.docx
+#*.pdf
 *.txt
+typescript
 tokenizer
 mush
-typescript
+thread_demo
+byutr
+pagetable
