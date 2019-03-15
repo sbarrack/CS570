@@ -63,3 +63,6 @@ dkms.conf
 *.docx
 *.pdf
 *.txt
+tokenizer
+mush
+typescript

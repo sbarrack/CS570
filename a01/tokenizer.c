@@ -18,8 +18,7 @@ int parse() {
         printf("\n");
         return END_INPUT;
     }
-    /* worst case: every char is a special character
-       adding one \0 for each char = 2*len(input) */
+    // worst case: every char is a special character adding one \0 for each char = 2*len(input)
     char *output = calloc(2, strlen(input));
 
     head = malloc(sizeof(struct Token)); // the current token
@@ -77,7 +76,7 @@ int parse() {
                         p++;
                     }
                     break;
-                // these special chars do not get included in new token (in instruction example but never explicitly stated)
+                // these special chars do not get included in new token
                 case '<':
                 case '>':
                     *q++ = '\0'; // end token

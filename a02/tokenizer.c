@@ -1,31 +1,16 @@
-/**
- * This is a slight modification of my a01 tokenizer.c. It still functions
- * and executes exactly the same. The linked list struct has moved to
- * tokenizer.h.
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "tokenizer.h"
 
-struct Token *head, *tail, *temp; // linked list
+Token *head, *tail, *temp; // linked list
 
-// return cases for parse()
-const int HAS_NEXT = 1;
-const int END_OF_FILE = 0;
-
-/*int main() {
-    while (parse()) {
-        pprint();
-        ffree();
-    }
-    return 0;
-}*/
+#define END_INPUT 0
+#define CONTINUE 1
 
 // gets the linked list for command.c
-struct Token *getcmds() {
+Token *getcmds() {
     return head;
 }
 
@@ -62,13 +47,12 @@ int parse() {
     if (!input) { // ctrl+d
         free(input);
         printf("\n");
-        return END_OF_FILE;
+        return END_INPUT;
     }
-    /* worst case: every char is a special character
-       adding one \0 for each char = 2*len(input) */
+    // worst case: every char is a special character adding one \0 for each char = 2*len(input)
     output = calloc(2, strlen(input));
 
-    head = malloc(sizeof(struct Token)); // the current token
+    head = malloc(sizeof(Token)); // the current token
     char *p = input; // used to iterate through input
     char *q = output; // ditto for output
     head->val = output;
@@ -87,7 +71,7 @@ int parse() {
                     p++;
             }
             // start next token
-            tail->next = malloc(sizeof(struct Token));
+            tail->next = malloc(sizeof(Token));
             tail = tail->next;
             tail->val = q;
         } else {
@@ -123,8 +107,7 @@ int parse() {
                         p++;
                     }
                     break;
-                /** these special chars do not get included in new token (in
-                 * instruction example but never explicitly stated) */
+                // these special chars do not get included in new token
                 case '<':
                 case '>':
                 case '|':
@@ -132,13 +115,13 @@ int parse() {
                 case '&':
                     *q++ = '\0'; // end token
                     // start next token
-                    tail->next = malloc(sizeof(struct Token));
+                    tail->next = malloc(sizeof(Token));
                     tail = tail->next;
                     tail->val = q;
                     *q++ = *p++; // accept next character
                     *q++ = '\0'; // end token
                     // start next token
-                    tail->next = malloc(sizeof(struct Token));
+                    tail->next = malloc(sizeof(Token));
                     tail = tail->next;
                     tail->val = q;
                     break;
@@ -173,5 +156,5 @@ int parse() {
         }
     }
 
-    return HAS_NEXT;
+    return CONTINUE;
 }

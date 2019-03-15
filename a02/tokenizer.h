@@ -1,14 +1,11 @@
-/**
- * This contains the linked list struct and the forward declarations of the
- * tokenizer functions to be used in command.c.
- */
+typedef struct Token Token;
 
 struct Token {
     char *val; // the string, null terminated
-    struct Token *next;
+    Token *next;
 };
 
-struct Token *getcmds();
+Token *getcmds();
 void pprint();
 void ffree();
 int parse();

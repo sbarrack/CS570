@@ -1,7 +1,3 @@
-/**
- * This is MUSH!
- */
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -10,13 +6,17 @@
 #include <string.h>
 #include "tokenizer.h"
 
+#define DEF_BUF_SIZE 256
+#define DEF_ARGV_SIZE 100
+
 // for printing errors
 #define printe(args...) fprintf(stderr, args)
 
-struct Token *head, *tail, *temp; // a different, local linked list
+Token *head, *tail, *temp; // a different, local linked list
+int errorPipeCount = 0, errorRedirectCount = 0;
 
-char in[256], *argv[100];
-void execute_commands(struct Token *list) {
+char in[DEF_BUF_SIZE], *argv[DEF_ARGV_SIZE];
+void execute_commands(Token *list) {
     if (list) {
         // # of remaining commands, will never exceed 1
         int cmds = 1;
@@ -28,7 +28,7 @@ void execute_commands(struct Token *list) {
             // if we still have cmds left
             if (!strcmp(tail->val, "pwd") && cmds > 0) {
                 cmds--;
-                if (getcwd(in, 256)) {
+                if (getcwd(in, DEF_BUF_SIZE)) {
                     printf("%s\n", in);
                 } else {
                     printe("Unable to obtain current directory\n");
@@ -49,8 +49,7 @@ void execute_commands(struct Token *list) {
                         // cd arg ; cmd == 1 argument
                         if (*tail->val == ';' || *tail->val == '|') {
                             if (chdir(temp->val)) {
-                                printe("%s%s", "Directory does not exist",
-                                " or is not accessible\n");
+                                printe("Directory does not exist or is not accessible\n");
                             }
                         } else { // cd arg cmd > 1 argument
                             printe("Accepts exactly one argument\n");
@@ -58,8 +57,7 @@ void execute_commands(struct Token *list) {
                         }
                     } else { // cd arg == 1 argument
                         if (chdir(tail->val)) {
-                            printe("%s%s", "Directory does not exist or ",
-                            "is not accessible\n");
+                            printe("Directory does not exist or is not accessible\n");
                         }
                         return;
                     }
@@ -82,11 +80,16 @@ void execute_commands(struct Token *list) {
                             if (tail->next) {
                                 tail = tail->next;
                             }
-                            printe("%s%s", "IO redirection and ",
-                            "background not implemented\n");
+                            // only print once per line
+                            if (errorRedirectCount++ < 1) {
+                                printe("IO redirection and background not implemented\n");
+                            }
                             break;
                         case '|':
-                            printe("Pipe not implemented\n");
+                            // only print once per line
+                            if (errorPipeCount++ < 1) {
+                                printe("Pipe not implemented\n");
+                            }
                         case ';':
                             if (tail->next) {
                                 // allows mush to process the next cmd token
@@ -118,10 +121,10 @@ void execute_commands(struct Token *list) {
                                 case '|':
                                 case ';':
                                     argv[i] = NULL;
-                                    i = 100; // stop while-loop
+                                    i = DEF_ARGV_SIZE; // stop while-loop
                             }
                         }
-                    } while (i < 100);
+                    } while (i < DEF_ARGV_SIZE);
 
                     // fork child process
                     pid_t pid = fork();
@@ -131,7 +134,9 @@ void execute_commands(struct Token *list) {
                             exit(0); // kill child process
                         }
                     } else if (pid > 0) { // need to wait
-                        i = wait(0);
+                        do {
+                            i = wait(NULL);
+                        } while (!i);
                         if (i == -1) {
                             printe("Process exited with error\n");
                         } else {
@@ -152,10 +157,10 @@ void execute_commands(struct Token *list) {
 }
 
 int main() {
-    while (parse()) { // no magic numbers this time, see tokenizer.c
+    while (parse()) {
         execute_commands(getcmds());
-        // pprint();
         ffree();
+        errorPipeCount = errorRedirectCount = 0;
     }
     return 0;
 }
