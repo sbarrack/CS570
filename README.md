@@ -43,4 +43,12 @@ Semaphores
 This assignment was done with [Joseph Couri](https://github.com/jcouri).  
 
 Compile `make`  
-Run `./mizzo`  
+Run `./mizzo [-L Lucy] [-E Ethel] [-f frogs] [-e snails]`  
+e.g. `./mizzo –f 600 –e 400 –L 300 –E 500`  
+
+Argument | Description
+--- | ---
+-L Lucy | Delay in ms for the "Lucy" consumer
+-E Ethel | Delay in ms for the "Ethel" consumer
+-f frogs | Delay in ms for the frog producer
+-e snails | Delay in ms for the snail producer
